@@ -1,6 +1,0 @@
-# Local secrets for `wrangler dev` — real values, never committed.
-.dev.vars
-.dev.vars.*
-
-# wrangler's local state and local D1 copy
-.wrangler/
