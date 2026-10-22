@@ -571,6 +571,17 @@ async function boot() {
     openMenu();
     if (!profile.stats.runs) show('how');
   }
+
+  // A build with no server behind it still plays the daily arena, but the
+  // leaderboard and the duel physically cannot work. Leaving the buttons there
+  // to answer "offline" makes a first-time tester think the game is broken,
+  // and a playtest only tells you about the thing people actually touched.
+  if (!API_CONFIGURED) {
+    for (const id of ['btnLeaders', 'btnChallenge']) {
+      const b = $(id);
+      if (b) b.classList.add('hidden');
+    }
+  }
 }
 
 // ---------------------------------------------------------------- wiring
