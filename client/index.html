@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#060912">
+<meta name="description" content="РИКОШЕТ — дуэль на одну точность. Один выстрел, один толчок в полёте.">
+<title>РИКОШЕТ</title>
+<!-- Telegram's SDK must load before our code; it is the only remote file we fetch.
+     No subresource-integrity hash on purpose: Telegram rewrites this file in
+     place, so a pinned hash would take the whole game down on their next
+     update. The origin is telegram.org over TLS, which is the same trust we
+     already place in the client running us. -->
+<script src="https://telegram.org/js/telegram-web-app.js?64"></script>
+<link rel="stylesheet" href="css/app.css">
+<!-- The mark, inline as a data URI: an icon file would be a second network
+     request for 400 bytes, and the browser asks for /favicon.ico whether we
+     have one or not. Same geometry as the animated logo in fx.js. -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23050a16'/%3E%3Crect x='10' y='10' width='80' height='80' rx='24' fill='none' stroke='%234a67a0' stroke-width='4'/%3E%3Cpath d='M18 24 L82 44 L21 64 L78 86' fill='none' stroke='%235be9ff' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='78' cy='86' r='9' fill='%23ffffff'/%3E%3C/svg%3E">
+</head>
+<body>
+<div id="app">
+  <canvas id="stage"></canvas>
+
+  <!-- in-game HUD -->
+  <div id="hud" class="layer hidden">
+    <div class="hud-top">
+      <div class="hud-score">
+        <div class="hud-label" data-t="score">Очки</div>
+        <div class="hud-value" id="hudScore">0</div>
+      </div>
+      <div class="hud-mid">
+        <div id="hudShots" class="shot-dots"></div>
+        <div class="hud-targets"><span id="hudTargets">0</span><span class="slash">/</span><span id="hudTotal">0</span></div>
+      </div>
+      <div class="hud-score right hidden" id="hudGhostBox">
+        <div class="hud-label" id="hudGhostName">—</div>
+        <div class="hud-value ghost" id="hudGhost">0</div>
+      </div>
+    </div>
+    <div class="hud-hint" id="hudHint"></div>
+  </div>
+
+  <!-- menu -->
+  <div id="menu" class="layer screen hidden">
+    <div class="brand">
+      <!-- the mark is drawn by fx.js createLogo(): a ball ricocheting three
+           times inside the frame, which is the whole game in one glyph -->
+      <canvas id="logoMenu" class="logo" aria-hidden="true"></canvas>
+      <h1>РИКОШЕТ</h1>
+      <p class="tagline" id="tagline" data-t="tagline">Дуэль на одну точность</p>
+    </div>
+    <div class="menu-stats">
+      <div><b id="statBest">—</b><i data-t="yourBest">твой рекорд</i></div>
+      <div><b id="statTop">—</b><i data-t="bestToday">лучший сегодня</i></div>
+    </div>
+    <div class="menu-buttons">
+      <button class="btn big" id="btnDaily"><span data-t="daily">Арена дня</span></button>
+      <button class="btn" id="btnPractice" data-t="practice">Тренировка</button>
+      <div class="row">
+        <button class="btn ghost" id="btnLeaders" data-t="leaderboard">Лидеры</button>
+        <button class="btn ghost" id="btnShop" data-t="shop">Скины</button>
+      </div>
+    </div>
+    <div class="menu-foot">
+      <button class="chip" id="btnHow" data-t="howTitle">Как играть</button>
+      <button class="chip" id="btnSound">🔊</button>
+      <button class="chip hidden" id="btnHome">＋</button>
+    </div>
+  </div>
+
+  <!-- result -->
+  <div id="result" class="layer screen hidden">
+    <div class="res-verdict" id="resVerdict"></div>
+    <div class="res-scores">
+      <div class="res-col">
+        <i data-t="yourScore">Твой счёт</i>
+        <b id="resScore">0</b>
+      </div>
+      <div class="res-vs hidden" id="resVsBox">
+        <span data-t="vs">против</span>
+      </div>
+      <div class="res-col hidden" id="resTheirBox">
+        <i id="resTheirName">—</i>
+        <b class="ghost" id="resTheir">0</b>
+      </div>
+    </div>
+    <div class="res-meta" id="resMeta"></div>
+    <div class="res-buttons">
+      <button class="btn big" id="btnChallenge"><span data-t="challenge">Вызвать друга</span></button>
+      <button class="btn" id="btnAgain" data-t="again">Ещё раз</button>
+      <button class="btn ghost" id="btnMenu" data-t="menu">В меню</button>
+    </div>
+  </div>
+
+  <!-- leaderboard -->
+  <div id="leaders" class="layer screen hidden">
+    <h2 data-t="leaderboard">Лидеры</h2>
+    <div class="tabs">
+      <button class="tab active" data-scope="today" data-t="today">Сегодня</button>
+      <button class="tab" data-scope="all" data-t="allTime">Всё время</button>
+    </div>
+    <div class="list" id="leaderList"></div>
+    <button class="btn ghost wide" id="btnLeadersBack" data-t="menu">В меню</button>
+  </div>
+
+  <!-- shop -->
+  <div id="shop" class="layer screen hidden">
+    <h2 data-t="shop">Скины</h2>
+    <div class="pass" id="passBox">
+      <div>
+        <b data-t="season">Пропуск сезона</b>
+        <i data-t="seasonDesc">Все скины сезона, 30 дней</i>
+      </div>
+      <button class="btn small" id="btnPass">299 ⭐</button>
+    </div>
+    <div class="grid" id="skinGrid"></div>
+    <button class="btn ghost wide" id="btnShopBack" data-t="menu">В меню</button>
+  </div>
+
+  <!-- how to play -->
+  <div id="how" class="layer screen hidden">
+    <h2 data-t="howTitle">Как играть</h2>
+    <ol class="how-list">
+      <li data-t="how1"></li>
+      <li data-t="how2"></li>
+      <li data-t="how3"></li>
+      <li data-t="how4"></li>
+    </ol>
+    <button class="btn big" id="btnHowOk" data-t="got">Понял</button>
+  </div>
+
+  <!-- boot -->
+  <div id="boot" class="layer screen">
+    <canvas id="logoBoot" class="logo big" aria-hidden="true"></canvas>
+    <div class="boot-text" id="bootText">РИКОШЕТ</div>
+    <div class="boot-sub" id="bootSub"></div>
+    <div class="boot-bar"><i id="bootBar"></i></div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

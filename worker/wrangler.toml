@@ -1,0 +1,47 @@
+name = "ricochet"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# Secrets — never in this file, never in the repo. Set each one once with
+#   wrangler secret put <NAME>
+# (run from the worker/ directory; wrangler asks for the value on stdin):
+#
+#   BOT_TOKEN       token from @BotFather; initData is validated against it
+#   TOKEN_SECRET    random 32+ bytes of our own, signs the 12 h bearer token
+#                   e.g. openssl rand -hex 32
+#   WEBHOOK_SECRET  random path segment; the webhook lives at /webhook/<it>
+#
+# Everything else is configuration, not a secret: it lives in [vars] below so
+# it is visible in the dashboard and shows up in a diff when it changes.
+#
+# For local work `wrangler dev` reads worker/.dev.vars instead (git-ignored,
+# same KEY=value names, secrets included). Nothing here reads process.env.
+
+[vars]
+# CORS: the Mini App's origin, no path and no trailing slash. A comma-separated
+# list is allowed. 127.0.0.1 on any port is always allowed, for local dev.
+ORIGIN = "https://REPLACE.github.io"
+# Bot username without the @, used to build https://t.me/<it>?startapp=...
+BOT_USERNAME = "REPLACE_bot"
+# Your own Telegram user id. The only id /refund obeys; everyone else is ignored.
+OWNER_ID = "0"
+# Where terms.html and privacy.html are published — the site root that
+# scripts/deploy.sh builds, which may include a path ORIGIN cannot carry.
+# /start, /paysupport and /terms link these, and moderation looks for them.
+PAGES_URL = "https://REPLACE.github.io/ricochet"
+# Full Mini App URL, optional. If set, /start shows a native web_app button;
+# if empty the button is the t.me deep link, which Telegram resolves itself.
+MINIAPP_URL = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ricochet"
+# fill in from the output of: wrangler d1 create ricochet
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# No KV binding: rate limits live in the D1 `rates` table (one upsert with
+# RETURNING per counted request), so the whole server needs exactly one
+# storage product on the free tier.
+
+[observability]
+enabled = true

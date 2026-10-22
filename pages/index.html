@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#060912">
+<meta name="description" content="РИКОШЕТ — дуэль на одну точность в Telegram. Пять выстрелов, один толчок в полёте.">
+<title>РИКОШЕТ / RICOCHET</title>
+<!-- Self-contained: no external CSS, fonts, scripts or trackers.
+     Relative links assume this file sits at the root of the published site,
+     next to client/, terms.html and privacy.html (that is what scripts/deploy.sh
+     builds into dist/). -->
+<style>
+:root{
+  --bg:#060912; --ink:#e8f1ff; --dim:rgba(205,222,255,.58);
+  --cyan:#4df0ff; --amber:#ffb347; --rose:#ff5c8a;
+  --panel:rgba(12,20,40,.86); --edge:rgba(120,170,255,.18);
+  --font:-apple-system,"SF Pro Text","Segoe UI",Roboto,system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--font)}
+body{
+  min-height:100vh;font-size:16px;line-height:1.6;
+  display:flex;flex-direction:column;
+  background:
+    radial-gradient(900px 600px at 50% -10%, rgba(77,240,255,.14), transparent 62%),
+    radial-gradient(700px 500px at 10% 110%, rgba(255,92,138,.10), transparent 60%),
+    var(--bg);
+  -webkit-text-size-adjust:100%;
+}
+.wrap{flex:1;width:100%;max-width:34rem;margin:0 auto;padding:22px 20px 40px;display:flex;flex-direction:column}
+header.top{display:flex;justify-content:flex-end;margin-bottom:8vh}
+.switch{display:flex;gap:6px;background:var(--panel);border:1px solid var(--edge);border-radius:999px;padding:4px}
+button.lang{
+  font:inherit;font-size:13px;font-weight:600;cursor:pointer;color:var(--dim);
+  background:transparent;border:0;border-radius:999px;padding:6px 14px;
+}
+button.lang.on{background:rgba(77,240,255,.16);color:var(--cyan)}
+.logo{
+  font-size:clamp(38px,13vw,68px);font-weight:800;letter-spacing:.06em;margin:0 0 2px;
+  background:linear-gradient(100deg,#4df0ff,#7fd6ff 38%,#ff8a4d);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--cyan);letter-spacing:.3em;font-size:12px;font-weight:700;margin:0 0 20px}
+.pitch{font-size:clamp(17px,4.6vw,20px);margin:0 0 6px;color:#fff}
+.note{color:var(--dim);font-size:15px;margin:0 0 28px}
+.cta{
+  display:inline-block;text-align:center;text-decoration:none;font-weight:700;font-size:17px;
+  color:#041018;background:linear-gradient(100deg,#4df0ff,#7fd6ff);
+  border-radius:14px;padding:15px 22px;box-shadow:0 10px 30px rgba(77,240,255,.18);
+}
+.cta:active{transform:translateY(1px)}
+.alt{display:inline-block;margin-top:14px;color:var(--dim);font-size:14px}
+.alt a{color:var(--dim)}
+.alt a:hover{color:var(--cyan)}
+.facts{list-style:none;padding:0;margin:30px 0 0;color:#dce7fb;font-size:15px}
+.facts li{padding-left:1.4em;position:relative;margin:7px 0}
+.facts li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--cyan)}
+.todo{
+  display:inline-block;background:rgba(255,92,138,.14);border:1px dashed var(--rose);
+  border-radius:6px;padding:0 6px;color:#ffc3d5;font-size:13px;font-weight:600;margin-top:12px;
+}
+footer.bot{
+  width:100%;max-width:34rem;margin:0 auto;padding:16px 20px 28px;
+  border-top:1px solid var(--edge);color:var(--dim);font-size:14px;
+}
+footer.bot a{color:var(--cyan);margin-right:16px;display:inline-block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="switch" role="group" aria-label="Language">
+    <button type="button" class="lang" data-set-lang="ru" aria-pressed="false">Русский</button>
+    <button type="button" class="lang" data-set-lang="en" aria-pressed="false">English</button>
+  </div>
+</header>
+
+<!-- The Russian block is visible without JavaScript; the toggle only swaps. -->
+<main data-lang="ru">
+  <h1 class="logo">РИКОШЕТ</h1>
+  <p class="sub">TELEGRAM MINI APP</p>
+  <p class="pitch">Дуэль на одну точность: одна арена в день для всех, пять
+  выстрелов и один толчок мяча в полёте.</p>
+  <p class="note">Бесплатно. Платить можно только за косметику — на результат
+  она не влияет.</p>
+  <!-- TODO: owner must replace --> <!-- REPLACE_BOT = real bot username -->
+  <a class="cta" href="https://t.me/REPLACE_BOT?startapp">Играть в Telegram</a>
+  <span class="alt">или <a href="client/">открыть в браузере</a> — без таблицы
+  лидеров и магазина</span>
+  <div><span class="todo">TODO: заменить REPLACE_BOT на имя бота</span></div>
+  <ul class="facts">
+    <li>Арена дня одинакова у всех — выигрывает рука, а не удача.</li>
+    <li>Счёт пересчитывает сервер, накрутка не проходит.</li>
+    <li>Только косметика и пропуск на 30 дней. Без ставок и лутбоксов.</li>
+  </ul>
+</main>
+
+<main data-lang="en" hidden>
+  <h1 class="logo">RICOCHET</h1>
+  <p class="sub">TELEGRAM MINI APP</p>
+  <p class="pitch">A duel of pure aim: one arena a day for everyone, five shots
+  and a single mid-flight nudge of the ball.</p>
+  <p class="note">Free to play. The only things you can pay for are cosmetics,
+  and they never change your score.</p>
+  <!-- TODO: owner must replace --> <!-- REPLACE_BOT = real bot username -->
+  <a class="cta" href="https://t.me/REPLACE_BOT?startapp">Play in Telegram</a>
+  <span class="alt">or <a href="client/">open in a browser</a> — without the
+  leaderboard and the shop</span>
+  <div><span class="todo">TODO: replace REPLACE_BOT with the bot username</span></div>
+  <ul class="facts">
+    <li>Everyone shoots the same daily arena — skill wins, not luck.</li>
+    <li>The server recomputes every score, so forging one gets you nowhere.</li>
+    <li>Cosmetics and a 30-day pass only. No betting, no loot boxes.</li>
+  </ul>
+</main>
+
+</div>
+<footer class="bot">
+  <a href="terms.html" data-lang="ru">Условия использования</a>
+  <a href="terms.html" data-lang="en" hidden>Terms of Use</a>
+  <a href="privacy.html" data-lang="ru">Политика конфиденциальности</a>
+  <a href="privacy.html" data-lang="en" hidden>Privacy Policy</a>
+</footer>
+<script>
+/* Language toggle. No libraries, no storage, no network. */
+(function () {
+  var btns = document.querySelectorAll('[data-set-lang]');
+  var blocks = document.querySelectorAll('[data-lang]');
+  function apply(lang) {
+    var i;
+    document.documentElement.lang = lang;
+    for (i = 0; i < blocks.length; i++) {
+      blocks[i].hidden = blocks[i].getAttribute('data-lang') !== lang;
+    }
+    for (i = 0; i < btns.length; i++) {
+      var on = btns[i].getAttribute('data-set-lang') === lang;
+      btns[i].className = on ? 'lang on' : 'lang';
+      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+  function initial() {
+    var m = /[?&]lang=(ru|en)/i.exec(location.search);
+    if (m) return m[1].toLowerCase();
+    var n = (navigator.language || 'en').toLowerCase();
+    return n.indexOf('ru') === 0 ? 'ru' : 'en';
+  }
+  for (var k = 0; k < btns.length; k++) {
+    btns[k].onclick = function () { apply(this.getAttribute('data-set-lang')); };
+  }
+  apply(initial());
+})();
+</script>
+</body>
+</html>
